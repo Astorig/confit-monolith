@@ -36,6 +36,7 @@ services:
         - .:/var/www/html:cached
       depends_on:
         - mysql
+        - clickhouse
       networks:
         - laravel
 
@@ -46,9 +47,30 @@ services:
       expose: []
       command: ["/usr/bin/supervisord"]
 
+    clickhouse:
+      container_name: ${COMPOSE_PROJECT_NAME}-clickhouse
+      image: yandex/clickhouse-server:21.8-alpine
+      volumes:
+        - ./.docker-volume-clickhouse:/var/lib/clickhouse
+        - ./docker/clickhouse/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
+        - ./docker/clickhouse/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+      healthcheck:
+        test: wget --spider -q 0.0.0.0:8123/ping
+        interval: 5s
+        timeout: 3s
+        retries: 5
+      ulimits:
+        nofile:
+          soft: 262144
+          hard: 262144
+      ports:
+        - "8123:8123"
+        - "9000:9000"
+      networks:
+        - laravel
+
     mysql:
       image: mysql:8.0
-      platform: linux/x86_64
       container_name: ${COMPOSE_PROJECT_NAME}-mysql
       command: --default-authentication-plugin=mysql_native_password --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1}
       environment:
@@ -61,6 +83,10 @@ services:
         - ./docker/dev/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
       networks:
         - laravel
+
+volumes:
+  .docker-volume-clickhouse:
+    driver: local
 
 networks:
   laravel:
