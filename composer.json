@@ -1,5 +1,5 @@
 {
-	"name": "systemsdk/docker-nginx-php-laravel",
+	"name": "confit/monolith",
 	"type": "project",
 	"description": "Docker laravel environment",
 	"keywords": [
@@ -10,13 +10,13 @@
 		"Supervisord",
 		"MySQL"
 	],
-	"homepage": "https://github.com/systemsdk/docker-nginx-php-laravel",
+	"homepage": "https://github.com/Astorig/confit-monolith",
 	"license": "MIT",
 	"authors": [
 		{
-			"name": "Dmitriy Kravtsov",
-			"email": "dmitriy.kravtsov@systemsdk.com",
-			"homepage": "https://github.com/dimadeush",
+			"name": "Aleksey Ukhov",
+			"email": "a9086666032@gmail.com",
+			"homepage": "https://github.com/Astorig",
 			"role": "Developer"
 		}
 	],
@@ -28,6 +28,7 @@
 		"ext-mbstring": "*",
 		"ext-pdo": "*",
 		"ext-pdo_mysql": "*",
+		"cybercog/laravel-clickhouse": "dev-master",
 		"guzzlehttp/guzzle": "^7.5",
 		"jaybizzle/laravel-migrations-organiser": "^6.2",
 		"laravel/framework": "^9.39",
@@ -116,6 +117,6 @@
 		]
 	},
 	"support": {
-		"issues": "https://github.com/systemsdk/docker-nginx-php-laravel/issues"
+		"issues": "https://github.com/Astorig/confit-monolith/issues"
 	}
 }
