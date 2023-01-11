@@ -1,5 +1,4 @@
 /.idea
-/.vscode
 /.vagrant
 /node_modules
 /public/build
@@ -16,6 +15,7 @@ auth.json
 _ide_helper.php
 .phpstorm.meta.php
 _ide_helper_models.php
+/.docker-volume-clickhouse
 reports/*
 !reports/.gitkeep
 npm-debug.log
