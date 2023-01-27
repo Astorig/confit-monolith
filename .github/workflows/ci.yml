@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: checkkout master
       - uses: actions/checkout@v1
 
       - name: Adding ssh-agent
