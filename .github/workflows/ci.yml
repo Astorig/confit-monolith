@@ -1,40 +1,40 @@
 name: Confit App
 
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        branches:
-            - main
-    release:
-        types: [published]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [published]
 
 env:
   CONTAINER_NAME: "confit-app"
   DEPLOYMENT_PATH: "/opt/confit"
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v1
+    steps:
+      - uses: actions/checkout@v1
 
-            - name: Adding ssh-agent
-            - run: eval $(ssh-agent -s)
+      - name: Adding ssh-agent
+      - run: eval $(ssh-agent -s)
 
-            - name: Adding ssh-key
-            - run: echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
+      - name: Adding ssh-key
+      - run: echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
 
-            - name: Rsync
-            - run: rsync -rlpcvz --no-p -e ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }}:$(echo $DEPLOYMENT_PATH)
+      - name: Rsync
+      - run: rsync -rlpcvz --no-p -e ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }}:$(echo $DEPLOYMENT_PATH)
 
-            - name: copy env
-            - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && sudo cp .env.test .env"
-              
-            - name: check files
-            - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && ls"
+      - name: copy env
+      - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && sudo cp .env.test .env"
+
+      - name: check files
+      - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && ls"
 #            - name: Build the docker images
 #              run: make build-test
 #            - name: Start the docker images
