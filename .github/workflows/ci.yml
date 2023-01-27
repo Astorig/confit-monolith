@@ -3,33 +3,48 @@ name: Confit App
 on:
     push:
         branches:
-            - master
-            - develop
+            - main
     pull_request:
         branches:
-            - master
-            - develop
+            - main
     release:
         types: [published]
 
+env:
+  CONTAINER_NAME: "confit-app"
+  DEPLOYMENT_PATH: "/opt/confit"
+
 jobs:
-
-    build:
-
+    deploy:
         runs-on: ubuntu-latest
 
         steps:
             - uses: actions/checkout@v1
-            - name: Build the docker images
-              run: make build-test
-            - name: Start the docker images
-              run: make start-test
-            - name: Check running containers
-              run: docker ps -a
-            - name: Wait for database connection
-              run: make wait-for-db
-            - name: Run migrations
-              run: make drop-migrate
+
+            - name: Adding ssh-agent
+            - run: eval $(ssh-agent -s)
+
+            - name: Adding ssh-key
+            - run: echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
+
+            - name: Rsync
+            - run: rsync -rlpcvz --no-p -e ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }}:$(echo $DEPLOYMENT_PATH)
+
+            - name: copy env
+            - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && sudo cp .env.test .env"
+              
+            - name: check files
+            - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && ls"
+#            - name: Build the docker images
+#              run: make build-test
+#            - name: Start the docker images
+#              run: make start-test
+#            - name: Check running containers
+#              run: docker ps -a
+#            - name: Wait for database connection
+#              run: make wait-for-db
+#            - name: Run migrations
+#              run: make drop-migrate
 #            - name: Run seeds
 #              run: make seed
 #            - name: Run test suite
@@ -46,5 +61,5 @@ jobs:
 #              run: make phpstan
 #            - name: Run Phpinsights PHP quality checks
 #              run: make phpinsights
-            - name: Stop the docker images
-              run: make stop-test
+#            - name: Stop the docker images
+#              run: make stop-test
