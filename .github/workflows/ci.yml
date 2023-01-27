@@ -20,22 +20,22 @@ jobs:
 
     steps:
       - name: checkkout master
-      - uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Adding ssh-agent
-      - run: eval $(ssh-agent -s)
+        run: eval $(ssh-agent -s)
 
       - name: Adding ssh-key
-      - run: echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
+        run: echo ${{ secrets.SSHKEY }} | tr -d '\r' | ssh-add -
 
       - name: Rsync
-      - run: rsync -rlpcvz --no-p -e ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }}:$(echo $DEPLOYMENT_PATH)
+        run: rsync -rlpcvz --no-p -e ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }}:$(echo $DEPLOYMENT_PATH)
 
       - name: copy env
-      - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && sudo cp .env.test .env"
+        run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && sudo cp .env.test .env"
 
       - name: check files
-      - run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && ls"
+        run: ssh ${{ secrets.USERNAME }}@${{ secrets.DEPLOYMENT_HOST }} "cd $(echo $DEPLOYMENT_PATH) && ls"
 #            - name: Build the docker images
 #              run: make build-test
 #            - name: Start the docker images
